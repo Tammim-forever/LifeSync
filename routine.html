@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Your Routine - LifeSync</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap" rel="stylesheet">
+  <script src="health-calculator.js"></script>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="logo">
+    <div class="heart-logo">
+      <svg width="50" height="50" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="#ff6b35"/>
+      </svg>
+    </div>
+    <span>LifeSync</span>
+  </div>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="#">About</a>
+    <a href="#">Contact</a>
+    <button class="btn">Get Started</button>
+  </nav>
+</header>
+
+<!-- ROUTINE SECTION -->
+<section class="routine-section">
+  <div id="loadingMessage">Loading your personalized routine...</div>
+  
+  <div id="routineContent" style="display:none;">
+    
+    <!-- USER PROFILE HEADER -->
+    <div class="user-profile-header">
+      <div class="user-info">
+        <h1>Your Personalized Daily Routine</h1>
+        <p id="userGreeting"></p>
+      </div>
+      <div class="health-summary">
+        <div class="summary-card">
+          <span class="label">BMI</span>
+          <span id="bmiValue" class="value"></span>
+          <span id="bmiStatus" class="status"></span>
+        </div>
+        <div class="summary-card">
+          <span class="label">Daily Calories</span>
+          <span id="caloriesValue" class="value"></span>
+        </div>
+        <div class="summary-card">
+          <span class="label">Water Intake</span>
+          <span id="waterValue" class="value"></span>
+          <span class="unit">L/day</span>
+        </div>
+        <div class="summary-card">
+          <span class="label">Ideal Sleep</span>
+          <span id="sleepValue" class="value"></span>
+          <span class="unit">hours</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLEEP SCHEDULE CARD -->
+    <div class="section-title">Sleep Schedule</div>
+    <div class="routine-card large-card">
+      <div class="routine-time">🌙 Sleep Management</div>
+      <h3 id="sleepTitle"></h3>
+      <div class="sleep-schedule">
+        <div class="schedule-item">
+          <span class="schedule-label">Bedtime:</span>
+          <span id="bedtime" class="schedule-time"></span>
+        </div>
+        <div class="schedule-item">
+          <span class="schedule-label">Wake Time:</span>
+          <span id="wakeTime" class="schedule-time"></span>
+        </div>
+        <div class="schedule-item">
+          <span class="schedule-label">Duration:</span>
+          <span id="sleepDuration" class="schedule-time"></span>
+        </div>
+        <p id="sleepRecommendation" class="recommendation"></p>
+      </div>
+    </div>
+
+    <!-- HEALTH METRICS SECTION -->
+    <div class="section-title">Your Health Metrics</div>
+    <div class="metrics-grid">
+      <div class="metric-card">
+        <h4>Physical Stats</h4>
+        <div class="metric-item">
+          <span>Age:</span>
+          <span id="metricAge"></span>
+        </div>
+        <div class="metric-item">
+          <span>Height:</span>
+          <span id="metricHeight"></span>
+        </div>
+        <div class="metric-item">
+          <span>Weight:</span>
+          <span id="metricWeight"></span>
+        </div>
+        <div class="metric-item">
+          <span>Gender:</span>
+          <span id="metricGender"></span>
+        </div>
+      </div>
+
+      <div class="metric-card">
+        <h4>Activity & Goals</h4>
+        <div class="metric-item">
+          <span>Activity Level:</span>
+          <span id="metricActivity"></span>
+        </div>
+        <div class="metric-item">
+          <span>Health Goal:</span>
+          <span id="metricGoal"></span>
+        </div>
+        <div class="metric-item">
+          <span>Current Sleep:</span>
+          <span id="metricSleep"></span>
+        </div>
+      </div>
+
+      <div class="metric-card">
+        <h4>Health Calculated Values</h4>
+        <div class="metric-item">
+          <span>BMI Category:</span>
+          <span id="metricBMI"></span>
+        </div>
+        <div class="metric-item">
+          <span>Recommended Calories:</span>
+          <span id="metricCalories"></span>
+        </div>
+        <div class="metric-item">
+          <span>Daily Water:</span>
+          <span id="metricWater"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- DAILY ROUTINE CARDS -->
+    <div class="section-title">Your Daily Routine Schedule</div>
+    <div class="routine-container" id="routineContainer">
+      <!-- Will be populated by JavaScript -->
+    </div>
+
+    <!-- MEAL RECOMMENDATIONS -->
+    <div class="section-title">Daily Meal Plan</div>
+    <div class="meal-recommendations">
+      <div class="meal-card">
+        <h4>🌅 Breakfast</h4>
+        <p id="mealBreakfast"></p>
+      </div>
+      <div class="meal-card">
+        <h4>🥗 Lunch</h4>
+        <p id="mealLunch"></p>
+      </div>
+      <div class="meal-card">
+        <h4>🍽️ Dinner</h4>
+        <p id="mealDinner"></p>
+      </div>
+      <div class="meal-card">
+        <h4>🍎 Snacks</h4>
+        <p id="mealSnacks"></p>
+      </div>
+      <div class="meal-card full-width">
+        <h4>💡 Nutrition Note</h4>
+        <p id="mealNote"></p>
+      </div>
+    </div>
+
+    <!-- EXERCISE RECOMMENDATIONS -->
+    <div class="section-title">Exercise Recommendations</div>
+    <div class="exercise-card">
+      <div class="routine-time">💪 Personalized Workout Plan</div>
+      <div class="exercise-details">
+        <div class="exercise-item">
+          <h4>Weekly Cardio</h4>
+          <p id="exerciseCardio"></p>
+        </div>
+        <div class="exercise-item">
+          <h4>Strength Training</h4>
+          <p id="exerciseStrength"></p>
+        </div>
+        <div class="exercise-item">
+          <h4>Intensity Level</h4>
+          <p id="exerciseIntensity"></p>
+        </div>
+        <div class="exercise-item">
+          <h4>Special Notes</h4>
+          <p id="exerciseNotes"></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- TIPS SECTION -->
+    <div class="tips-section">
+      <h2>Tips for Success</h2>
+      <div class="tips-grid">
+        <div class="tip-card">
+          <h4>🎯 Be Consistent</h4>
+          <p>Follow this routine daily for at least 21 days to build lasting habits.</p>
+        </div>
+        <div class="tip-card">
+          <h4>💧 Hydration</h4>
+          <p id="tipHydration"></p>
+        </div>
+        <div class="tip-card">
+          <h4>📱 Sleep Quality</h4>
+          <p>Maintain consistent sleep schedule for better recovery and health.</p>
+        </div>
+        <div class="tip-card">
+          <h4>📊 Track Progress</h4>
+          <p>Keep a journal to monitor improvements and adjust as needed.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ACTION BUTTONS -->
+    <div class="routine-actions">
+      <a href="index.html" class="btn-secondary">← Generate New Routine</a>
+      <button class="btn-download" onclick="downloadRoutine()">📥 Download Routine</button>
+    </div>
+
+  </div>
+
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p>&copy; 2026 LifeSync. All rights reserved.</p>
+  <p>Create your perfect daily routine today!</p>
+</footer>
+
+<script>
+// Load and display routine on page load
+document.addEventListener('DOMContentLoaded', function() {
+  const formData = getFormData();
+  
+  if (!formData) {
+    document.getElementById('loadingMessage').innerHTML = '<p style="color: red; font-size: 18px; text-align: center; padding: 40px;">No routine data found. Please <a href="index.html">generate a new routine</a>.</p>';
+    return;
+  }
+  
+  // Generate personalized routine
+  const routine = generatePersonalizedRoutine(formData);
+  
+  // Hide loading and show content
+  document.getElementById('loadingMessage').style.display = 'none';
+  document.getElementById('routineContent').style.display = 'block';
+  
+  // Populate user greeting
+  document.getElementById('userGreeting').textContent = `Welcome back! Let's create your perfect routine based on your health profile.`;
+  
+  // Populate health summary
+  document.getElementById('bmiValue').textContent = routine.healthMetrics.bmi;
+  document.getElementById('bmiStatus').textContent = routine.healthMetrics.bmiCategory;
+  document.getElementById('caloriesValue').textContent = routine.healthMetrics.dailyCalories;
+  document.getElementById('waterValue').textContent = routine.healthMetrics.waterIntake;
+  document.getElementById('sleepValue').textContent = routine.healthMetrics.idealSleep;
+  
+  // Populate sleep schedule
+  const sleepSchedule = routine.healthMetrics.sleepSchedule;
+  document.getElementById('sleepTitle').textContent = `Sleep: ${sleepSchedule.sleepHours} hours per night`;
+  document.getElementById('bedtime').textContent = sleepSchedule.bedtime;
+  document.getElementById('wakeTime').textContent = sleepSchedule.wakeTime;
+  document.getElementById('sleepDuration').textContent = `${sleepSchedule.sleepHours} hours`;
+  document.getElementById('sleepRecommendation').textContent = sleepSchedule.recommendation;
+  
+  // Populate metrics
+  document.getElementById('metricAge').textContent = routine.userInfo.age + ' years';
+  document.getElementById('metricHeight').textContent = routine.userInfo.height + ' cm';
+  document.getElementById('metricWeight').textContent = routine.userInfo.weight + ' kg';
+  document.getElementById('metricGender').textContent = routine.userInfo.gender.charAt(0).toUpperCase() + routine.userInfo.gender.slice(1);
+  document.getElementById('metricActivity').textContent = routine.userInfo.activityLevel;
+  document.getElementById('metricGoal').textContent = routine.userInfo.healthGoal;
+  document.getElementById('metricSleep').textContent = routine.userInfo.sleepHours + ' hours';
+  document.getElementById('metricBMI').textContent = routine.healthMetrics.bmiCategory + ' (BMI: ' + routine.healthMetrics.bmi + ')';
+  document.getElementById('metricCalories').textContent = routine.healthMetrics.dailyCalories + ' calories';
+  document.getElementById('metricWater').textContent = routine.healthMetrics.waterIntake + ' liters';
+  
+  // Populate meal recommendations
+  const meals = routine.healthMetrics.mealRecommendations;
+  document.getElementById('mealBreakfast').textContent = meals.breakfast;
+  document.getElementById('mealLunch').textContent = meals.lunch;
+  document.getElementById('mealDinner').textContent = meals.dinner;
+  document.getElementById('mealSnacks').textContent = meals.snacks;
+  document.getElementById('mealNote').textContent = meals.note;
+  
+  // Populate exercise recommendations
+  const exercise = routine.healthMetrics.exerciseRecommendation;
+  document.getElementById('exerciseCardio').textContent = exercise.cardioMinutes + ' minutes per week of cardio';
+  document.getElementById('exerciseStrength').textContent = exercise.strengthDays + ' days per week';
+  document.getElementById('exerciseIntensity').textContent = exercise.intensity;
+  document.getElementById('exerciseNotes').textContent = exercise.warning || exercise.lowImpact ? (exercise.warning || 'Focus on low-impact activities') : 'No special limitations';
+  
+  // Populate tips
+  document.getElementById('tipHydration').textContent = `Drink approximately ${routine.healthMetrics.waterIntake} liters of water daily for optimal hydration.`;
+  
+  // Generate routine cards based on sleep schedule
+  generateRoutineCards(sleepSchedule, routine.userInfo.healthGoal, routine.healthMetrics.exerciseRecommendation);
+});
+
+function generateRoutineCards(sleepSchedule, healthGoal, exerciseRec) {
+  const container = document.getElementById('routineContainer');
+  
+  // Parse wake time from format like "6:00 AM" or "6:30 AM"
+  let wakeHour = 6;
+  let wakeMinute = 0;
+  const wakeTimeParts = sleepSchedule.wakeTime.match(/(\d+):(\d+)\s(AM|PM)/);
+  if (wakeTimeParts) {
+    wakeHour = parseInt(wakeTimeParts[1]);
+    wakeMinute = parseInt(wakeTimeParts[2]);
+    const period = wakeTimeParts[3];
+    // Convert to 24-hour format for calculations
+    if (period === 'PM' && wakeHour !== 12) {
+      wakeHour += 12;
+    } else if (period === 'AM' && wakeHour === 12) {
+      wakeHour = 0;
+    }
+  }
+  
+  const routines = [
+    {
+      time: sleepSchedule.wakeTime,
+      emoji: '🌅',
+      title: 'Wake Up & Morning Ritual',
+      description: 'Start your day with a glass of water and light stretching to energize yourself.',
+      duration: '30 min',
+      energy: 'Low'
+    },
+    {
+      time: formatTime(wakeHour, wakeMinute + 30),
+      emoji: '🥗',
+      title: 'Healthy Breakfast',
+      description: 'Eat a nutritious breakfast with proteins, carbs, and fruits to fuel your day.',
+      duration: '20 min',
+      calories: '400-500'
+    },
+    {
+      time: formatTime(wakeHour + 1, wakeMinute),
+      emoji: '💪',
+      title: 'Exercise & Workout',
+      description: `${exerciseRec.cardioMinutes} minutes of ${exerciseRec.intensity} activity. Mix cardio and strength training.`,
+      duration: exerciseRec.cardioMinutes + ' min',
+      intensity: exerciseRec.intensity
+    },
+    {
+      time: formatTime(wakeHour + 2, wakeMinute),
+      emoji: '⚙️',
+      title: 'Productive Work Session',
+      description: 'Focus on deep work during peak productivity hours. Take a 5-minute break every 50 minutes.',
+      duration: '2-3 hours',
+      break: 'Every 50 min'
+    },
+    {
+      time: '12:00 PM',
+      emoji: '🍽️',
+      title: 'Lunch Break',
+      description: 'Take a proper lunch break. Include lean proteins, vegetables, and whole grains.',
+      duration: '30 min',
+      calories: '500-600'
+    },
+    {
+      time: '01:30 PM',
+      emoji: '🚶',
+      title: 'Light Activity',
+      description: 'Take a 15-minute walk or do light stretching to maintain energy and improve digestion.',
+      duration: '15 min',
+      intensity: 'Low'
+    },
+    {
+      time: '06:30 PM',
+      emoji: '🍲',
+      title: 'Dinner',
+      description: 'Eat early to allow proper digestion before bedtime. Keep it light and nutritious.',
+      duration: '30 min',
+      calories: '400-500'
+    },
+    {
+      time: '08:00 PM',
+      emoji: '🧘',
+      title: 'Evening Wind Down',
+      description: 'Relax with reading, meditation, or light stretching. Avoid screens 30 minutes before bed.',
+      duration: '1 hour',
+      activity: 'Relaxing'
+    },
+    {
+      time: sleepSchedule.bedtime,
+      emoji: '😴',
+      title: 'Quality Sleep',
+      description: `Maintain consistent sleep schedule. You need ${sleepSchedule.sleepHours} hours for optimal recovery.`,
+      duration: sleepSchedule.sleepHours + ' hours',
+      recovery: 'Essential'
+    }
+  ];
+  
+  routines.forEach(routine => {
+    const card = document.createElement('div');
+    card.className = 'routine-card';
+    card.innerHTML = `
+      <div class="routine-time">${routine.emoji} ${routine.time}</div>
+      <h3>${routine.title}</h3>
+      <p>${routine.description}</p>
+      <div class="routine-details">
+        <span class="tag">Duration: ${routine.duration}</span>
+        ${routine.energy ? `<span class="tag">Energy: ${routine.energy}</span>` : ''}
+        ${routine.calories ? `<span class="tag">Calories: ${routine.calories}</span>` : ''}
+        ${routine.intensity ? `<span class="tag">Intensity: ${routine.intensity}</span>` : ''}
+        ${routine.break ? `<span class="tag">Break: ${routine.break}</span>` : ''}
+        ${routine.activity ? `<span class="tag">Activity: ${routine.activity}</span>` : ''}
+        ${routine.recovery ? `<span class="tag">${routine.recovery}</span>` : ''}
+      </div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+function formatTime(hour, minute) {
+  const period = hour >= 12 ? 'PM' : 'AM';
+  const displayHour = hour % 12 || 12;
+  const displayMinute = minute < 10 ? '0' + minute : minute;
+  return `${displayHour}:${displayMinute} ${period}`;
+}
+
+function downloadRoutine() {
+  const formData = getFormData();
+  const routine = generatePersonalizedRoutine(formData);
+  
+  let content = 'LifeSync - Your Personalized Daily Routine\n';
+  content += '==========================================\n\n';
+  content += `Generated on: ${new Date().toLocaleDateString()}\n\n`;
+  
+  content += 'USER INFORMATION\n';
+  content += `Age: ${routine.userInfo.age} years\n`;
+  content += `Height: ${routine.userInfo.height} cm\n`;
+  content += `Weight: ${routine.userInfo.weight} kg\n`;
+  content += `Gender: ${routine.userInfo.gender}\n`;
+  content += `Activity Level: ${routine.userInfo.activityLevel}\n`;
+  content += `Health Goal: ${routine.userInfo.healthGoal}\n\n`;
+  
+  content += 'HEALTH METRICS\n';
+  content += `BMI: ${routine.healthMetrics.bmi} (${routine.healthMetrics.bmiCategory})\n`;
+  content += `Daily Calorie Needs: ${routine.healthMetrics.dailyCalories} calories\n`;
+  content += `Daily Water Intake: ${routine.healthMetrics.waterIntake} liters\n`;
+  content += `Recommended Sleep: ${routine.healthMetrics.idealSleep} hours\n\n`;
+  
+  content += 'SLEEP SCHEDULE\n';
+  content += `Bedtime: ${routine.healthMetrics.sleepSchedule.bedtime}\n`;
+  content += `Wake Time: ${routine.healthMetrics.sleepSchedule.wakeTime}\n`;
+  content += `Duration: ${routine.healthMetrics.sleepSchedule.sleepHours} hours\n\n`;
+  
+  content += 'MEAL RECOMMENDATIONS\n';
+  const meals = routine.healthMetrics.mealRecommendations;
+  content += `Breakfast: ${meals.breakfast}\n`;
+  content += `Lunch: ${meals.lunch}\n`;
+  content += `Dinner: ${meals.dinner}\n`;
+  content += `Snacks: ${meals.snacks}\n\n`;
+  
+  content += 'EXERCISE RECOMMENDATIONS\n';
+  const exercise = routine.healthMetrics.exerciseRecommendation;
+  content += `Cardio: ${exercise.cardioMinutes} minutes per week\n`;
+  content += `Strength: ${exercise.strengthDays} days per week\n`;
+  content += `Intensity: ${exercise.intensity}\n`;
+  
+  // Create and download file
+  const element = document.createElement('a');
+  element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(content));
+  element.setAttribute('download', 'LifeSync-Routine.txt');
+  element.style.display = 'none';
+  document.body.appendChild(element);
+  element.click();
+  document.body.removeChild(element);
+}
+</script>

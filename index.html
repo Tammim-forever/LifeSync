@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>LifeSync</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap" rel="stylesheet">
+  <script src="health-calculator.js"></script>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="logo">
+    <div class="heart-logo">
+      <svg width="50" height="50" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="#ff6b35"/>
+      </svg>
+    </div>
+    <span>LifeSync</span>
+  </div>
+  <nav>
+    <a href="#">Home</a>
+    <a href="#">About</a>
+    <a href="#">Contact</a>
+    <button class="btn">Get Started</button>
+  </nav>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+
+  <h1>Create Your Perfect Daily Routine!</h1>
+  <p>Enter your details to get a personalized health plan</p>
+
+  <div class="hero-content">
+
+    <!-- LEFT IMAGE -->
+    <div class="hero-illustration">
+      <svg width="320" height="320" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Single Balloon -->
+        <circle cx="300" cy="80" r="35" fill="#ff6b35" opacity="0.9"/>
+        
+        <!-- Balloon String -->
+        <path d="M300 115 L250 200" stroke="#666" stroke-width="2"/>
+        
+        <!-- Girl's Head -->
+        <circle cx="200" cy="180" r="35" fill="#ffdbac"/>
+        
+        <!-- Girl's Hair -->
+        <path d="M165 170 Q200 140 235 170 L235 185 Q200 155 165 185 Z" fill="#8e2de2"/>
+        
+        <!-- Girl's Face -->
+        <circle cx="190" cy="175" r="3" fill="#333"/>
+        <circle cx="210" cy="175" r="3" fill="#333"/>
+        <path d="M195 185 Q200 190 205 185" stroke="#333" stroke-width="2" fill="none"/>
+        
+        <!-- Girl's Body/Dress -->
+        <path d="M170 215 L230 215 L240 280 L160 280 Z" fill="#f7931e"/>
+        
+        <!-- Girl's Arms -->
+        <rect x="155" y="220" width="20" height="8" rx="4" fill="#ffdbac"/>
+        <rect x="225" y="220" width="20" height="8" rx="4" fill="#ffdbac"/>
+        
+        <!-- Girl's Hands holding string -->
+        <circle cx="145" cy="224" r="6" fill="#ffdbac"/>
+        <circle cx="255" cy="224" r="6" fill="#ffdbac"/>
+        
+        <!-- Girl's Legs -->
+        <rect x="185" y="280" width="8" height="25" rx="4" fill="#ffdbac"/>
+        <rect x="207" y="280" width="8" height="25" rx="4" fill="#ffdbac"/>
+        
+        <!-- Girl's Shoes -->
+        <rect x="180" y="300" width="15" height="8" rx="4" fill="#333"/>
+        <rect x="205" y="300" width="15" height="8" rx="4" fill="#333"/>
+        
+        <!-- Ground -->
+        <rect x="140" y="308" width="120" height="10" rx="5" fill="#8e2de2" opacity="0.3"/>
+        
+        <!-- Flowers around -->
+        <circle cx="160" cy="320" r="3" fill="#f7931e"/>
+        <circle cx="170" cy="318" r="2" fill="#ff6b35"/>
+        <circle cx="230" cy="322" r="3" fill="#8e2de2"/>
+        <circle cx="240" cy="320" r="2" fill="#f7931e"/>
+      </svg>
+    </div>
+
+    <!-- FORM CARD -->
+    <div class="form-card">
+      <div class="form-header">
+        <h2>Personalize Your Plan</h2>
+        <div class="form-progress">
+          <div class="progress-bar"></div>
+        </div>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Gender</label>
+          <select id="gender" class="form-input">
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Age</label>
+          <input type="number" id="age" min="13" max="120" placeholder="25" value="25" class="form-input">
+        </div>
+
+        <div class="form-group full-width">
+          <label>Height</label>
+          <div class="height-toggle">
+            <button type="button" class="toggle-btn active" onclick="switchHeightUnit('cm')">Centimeters</button>
+            <button type="button" class="toggle-btn" onclick="switchHeightUnit('ft')">Feet & Inches</button>
+          </div>
+          <div id="cmInput" class="height-input-group">
+            <input type="number" id="heightCm" min="130" max="220" placeholder="175" value="175" class="form-input">
+          </div>
+          <div id="ftInput" class="height-input-group" style="display:none;">
+            <div class="feet-inches-input">
+              <input type="number" id="heightFt" min="4" max="7" placeholder="5" value="5" class="form-input">
+              <span class="ft-label">ft</span>
+              <input type="number" id="heightIn" min="0" max="11" placeholder="9" value="9" class="form-input">
+              <span class="in-label">in</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Weight</label>
+          <input type="number" id="weight" min="30" max="200" placeholder="75" value="75" class="form-input">
+        </div>
+
+        <div class="form-group">
+          <label>Sleep Hours</label>
+          <select id="sleepHours" class="form-input">
+            <option value="6">6 hours</option>
+            <option value="7" selected>7 hours</option>
+            <option value="8">8 hours</option>
+            <option value="9">9 hours</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Bedtime</label>
+          <input type="time" id="bedtimeInput" value="22:00" class="form-input">
+        </div>
+
+        <div class="form-group">
+          <label>Activity Level</label>
+          <select id="activityLevel" class="form-input">
+            <option value="Sedentary">Sedentary</option>
+            <option value="Lightly Active" selected>Lightly Active</option>
+            <option value="Moderate">Moderate</option>
+            <option value="Very Active">Very Active</option>
+            <option value="Extremely Active">Extremely Active</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Health Goal</label>
+          <select id="healthGoal" class="form-input">
+            <option value="Stay Fit" selected>Stay Fit</option>
+            <option value="Weight Loss">Weight Loss</option>
+            <option value="Muscle Gain">Muscle Gain</option>
+          </select>
+        </div>
+      </div>
+
+      <button class="generate" onclick="generateRoutine()">
+        <span>Generate My Routine</span>
+        <svg class="arrow-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M5 12h14M12 5l7 7-7 7"/>
+        </svg>
+      </button>
+    </div>
+
+  </div>
+
+</section>
+
+<!-- FEATURES -->
+<section class="features">
+
+  <div class="feature">
+    <div class="feature-icon">
+      <svg width="80" height="80" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" fill="#ff6b35"/>
+        <circle cx="12" cy="12" r="3" fill="#f7931e"/>
+        <path d="M12 7v5l3 2" stroke="#8e2de2" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <h3>Better Sleep Advice</h3>
+    <p>Get your ideal sleep duration.</p>
+  </div>
+
+  <div class="feature">
+    <div class="feature-icon">
+      <svg width="80" height="80" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M3 7v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2z" fill="#ff6b35"/>
+        <path d="M8 5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2H8V5z" fill="#f7931e"/>
+        <circle cx="9" cy="12" r="1" fill="#8e2de2"/>
+        <circle cx="12" cy="12" r="1" fill="#8e2de2"/>
+        <circle cx="15" cy="12" r="1" fill="#8e2de2"/>
+      </svg>
+    </div>
+    <h3>Healthy Diet Tips</h3>
+    <p>Personalized meal recommendations.</p>
+  </div>
+
+  <div class="feature">
+    <div class="feature-icon">
+      <svg width="80" height="80" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" fill="#ff6b35"/>
+        <path d="M8 22l4-4 4 4" stroke="#f7931e" stroke-width="2" stroke-linecap="round"/>
+        <path d="M12 18v4" stroke="#8e2de2" stroke-width="2"/>
+      </svg>
+    </div>
+    <h3>Exercise Guidance</h3>
+    <p>Workout plans tailored for you.</p>
+  </div>
+
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p>&copy; 2026 LifeSync. All rights reserved.</p>
+  <p>Create your perfect daily routine today!</p>
+</footer>
+
+<script>
+function switchHeightUnit(unit) {
+  const cmInput = document.getElementById('cmInput');
+  const ftInput = document.getElementById('ftInput');
+  const toggleBtns = document.querySelectorAll('.toggle-btn');
+  
+  if (unit === 'cm') {
+    cmInput.style.display = 'block';
+    ftInput.style.display = 'none';
+    toggleBtns[0].classList.add('active');
+    toggleBtns[1].classList.remove('active');
+  } else {
+    cmInput.style.display = 'none';
+    ftInput.style.display = 'block';
+    toggleBtns[0].classList.remove('active');
+    toggleBtns[1].classList.add('active');
+  }
+}
+
+function getHeightInCm() {
+  const unit = document.querySelector('input[name="heightUnit"]:checked');
+  
+  if (!unit) {
+    // Default to cm
+    const cm = document.getElementById('heightCm').value;
+    return parseInt(cm);
+  }
+  
+  if (unit.value === 'cm') {
+    return parseInt(document.getElementById('heightCm').value);
+  } else {
+    const feet = parseInt(document.getElementById('heightFt').value) || 0;
+    const inches = parseInt(document.getElementById('heightIn').value) || 0;
+    // Convert feet and inches to cm (1 foot = 30.48cm, 1 inch = 2.54cm)
+    return Math.round((feet * 30.48) + (inches * 2.54));
+  }
+}
+
+function generateRoutine() {
+  // Get form values
+  const formData = {
+    gender: document.getElementById('gender').value,
+    age: parseInt(document.getElementById('age').value),
+    height: getHeightInCm(),
+    weight: parseInt(document.getElementById('weight').value),
+    sleepHours: document.getElementById('sleepHours').value,
+    bedtime: document.getElementById('bedtimeInput').value,
+    activityLevel: document.getElementById('activityLevel').value,
+    healthGoal: document.getElementById('healthGoal').value
+  };
+  
+  // Validate inputs
+  if (!formData.age || !formData.height || !formData.weight) {
+    alert('Please fill in all required fields (Age, Height, Weight)');
+    return;
+  }
+  
+  if (formData.age < 13 || formData.age > 120) {
+    alert('Please enter a valid age between 13 and 120');
+    return;
+  }
+  
+  if (formData.height < 130 || formData.height > 220) {
+    alert('Please enter a valid height between 130 and 220 cm');
+    return;
+  }
+  
+  if (formData.weight < 30 || formData.weight > 200) {
+    alert('Please enter a valid weight between 30 and 200 kg');
+    return;
+  }
+  
+  // Save to localStorage
+  saveFormData(formData);
+  
+  // Redirect to routine page
+  window.location.href = 'routine.html';
+}
+</script>
+
+</body>
+</html>
