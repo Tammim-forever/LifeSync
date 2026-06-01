@@ -1,5 +1,5 @@
 **# LifeSync**
-
+Based on Real life analysis and algorithm , Easier to find your daily stuff easily
 
 Beta version 1.1.0
 
