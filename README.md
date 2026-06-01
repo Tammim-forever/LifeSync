@@ -18,3 +18,4 @@ Added new UI color - Orange
 
 Added new features with animations
 
+Made by Wasy and Tammim
