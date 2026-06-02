@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Your Routine - LifeSync</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="health-calculator.js"></script>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="logo">
+    <div class="heart-logo">
+      <svg width="50" height="50" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="#ff6b35"/>
+      </svg>
+    </div>
+    <span>LifeSync</span>
+  </div>
+  <nav>
+    <a href="start.html">Home</a>
+    <a href="#">About</a>
+    <a href="#">Contact</a>
+    <button class="btn" onclick="window.location.href='start.html'">Get Started</button>
+  </nav>
+</header>
+
+<!-- ROUTINE SECTION -->
+<section class="routine-section">
+  <div id="loadingMessage">Loading your personalized routine...</div>
+  
+  <div id="routineContent" style="display:none;">
+    
+    <!-- USER PROFILE HEADER -->
+    <div class="user-profile-header">
+      <div class="user-info">
+        <h1>Your Personalized Daily Routine</h1>
+        <p id="userGreeting"></p>
+      </div>
+      <div class="health-summary">
+        <div class="summary-card">
+          <span class="label">BMI</span>
+          <span id="bmiValue" class="value"></span>
+          <span id="bmiStatus" class="status"></span>
+        </div>
+        <div class="summary-card health-score-card">
+          <span class="label">Health Score</span>
+          <span id="healthScoreValue" class="value"></span>
+          <span id="healthScoreLabel" class="status score-label"></span>
+        </div>
+        <div class="summary-card">
+          <span class="label">Daily Calories</span>
+          <span id="caloriesValue" class="value"></span>
+        </div>
+        <div class="summary-card">
+          <span class="label">Water Intake</span>
+          <span id="waterValue" class="value"></span>
+          <span class="unit">L/day</span>
+        </div>
+        <div class="summary-card">
+          <span class="label">Ideal Sleep</span>
+          <span id="sleepValue" class="value"></span>
+          <span class="unit">hours</span>
+        </div>
+      </div>
+      <div class="chart-card">
+        <h3>Health Balance Chart</h3>
+        <canvas id="healthChart" height="220"></canvas>
+      </div>
+    </div>
+    <!--WARNING CARD-->
+    <div id="healthNote" class="health-note" style="display:none;"></div>
+
+    <!-- CALENDAR TRACKER -->
+    <div id="calendarSection" class="calendar-section" style="display:none;">
+      <div class="section-title">30-Day Routine Tracker</div>
+      <p class="calendar-description">Mark each day you follow the routine. Click a day to manually add calories or keep the routine default, then watch your progress update instantly.</p>
+      <div id="calendarSummary" class="calendar-summary"></div>
+
+      <div id="calendarEntryPopup" class="calendar-popup" aria-hidden="true">
+        <div class="calendar-popup-card">
+          <button type="button" class="calendar-popup-close" onclick="closeCalendarPopup()" aria-label="Close entry dialog">×</button>
+          <h3 id="popupDayTitle">Track Day</h3>
+          <p id="popupDayInfo">Record calories for this day or leave blank to use your normal routine target.</p>
+          <label for="calendarCaloriesInput">Calories consumed</label>
+          <input id="calendarCaloriesInput" type="number" min="0" placeholder="e.g. 1800" />
+          <div class="calendar-popup-actions">
+            <button type="button" class="btn-secondary" onclick="closeCalendarPopup()">Cancel</button>
+            <button type="button" class="btn" onclick="saveCalendarDayStatus(1)">Save as Done</button>
+            <button type="button" class="btn-secondary" onclick="saveCalendarDayStatus(2)">Mark Skipped</button>
+            <button type="button" class="btn-secondary" onclick="saveCalendarDayStatus(0)">Clear</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="progress-metrics">
+        <div class="progress-card">
+          <span class="progress-label">Average Daily Calories</span>
+          <strong id="avgCaloriesValue">-</strong>
+          <p class="progress-note">Your target intake for each planned routine day.</p>
+        </div>
+        <div class="progress-card">
+          <span class="progress-label">Month Calories Logged</span>
+          <strong id="weeklyCaloriesValue">-</strong>
+          <p class="progress-note">Based on days you marked as completed.</p>
+        </div>
+        <div class="progress-card">
+          <span class="progress-label">Total Water Intake</span>
+          <strong id="totalWaterValue">-</strong>
+          <p class="progress-note">Estimated water amount for your completed routine days.</p>
+        </div>
+        <div class="progress-card">
+          <span class="progress-label">Completion Rate</span>
+          <strong id="completionRateValue">-</strong>
+          <p class="progress-note">Percent of the 30-day routine marked complete.</p>
+        </div>
+        <div class="progress-card full-width">
+          <span class="progress-label">Completion Insight</span>
+          <p class="progress-note" id="completionMessage">Complete more days to see stronger routine progress.</p>
+        </div>
+      </div>
+
+      <div id="calendarGrid" class="calendar-grid"></div>
+    </div>
+
+    <div id="guestCalendarNotice" class="calendar-guest-notice" style="display:none;">
+      <div class="callout-card">
+        <h3>Want progress tracking?</h3>
+        <p>Create an account or log in to unlock the habit tracker and calendar view for your routine. Guest users can still generate plans and use all other features.</p>
+      </div>
+    </div>
+
+    <!-- SLEEP SCHEDULE CARD -->
+    <div class="section-title">Sleep Schedule</div>
+    <div class="routine-card large-card">
+      <div class="routine-time">🌙 Sleep Management</div>
+      <h3 id="sleepTitle"></h3>
+      <div class="sleep-schedule">
+        <div class="schedule-item">
+          <span class="schedule-label">Bedtime:</span>
+          <span id="bedtime" class="schedule-time"></span>
+        </div>
+        <div class="schedule-item">
+          <span class="schedule-label">Wake Time:</span>
+          <span id="wakeTime" class="schedule-time"></span>
+        </div>
+        <div class="schedule-item">
+          <span class="schedule-label">Duration:</span>
+          <span id="sleepDuration" class="schedule-time"></span>
+        </div>
+        <p id="sleepRecommendation" class="recommendation"></p>
+        <p id="sleepReason" class="recommendation reason"></p>
+      </div>
+    </div>
+
+    <!-- HEALTH METRICS SECTION -->
+    <div class="section-title">Your Health Metrics</div>
+    <div class="metrics-grid">
+      <div class="metric-card">
+        <h4>Physical Stats</h4>
+        <div class="metric-item">
+          <span>Age:</span>
+          <span id="metricAge"></span>
+        </div>
+        <div class="metric-item">
+          <span>Height:</span>
+          <span id="metricHeight"></span>
+        </div>
+        <div class="metric-item">
+          <span>Weight:</span>
+          <span id="metricWeight"></span>
+        </div>
+        <div class="metric-item">
+          <span>Gender:</span>
+          <span id="metricGender"></span>
+        </div>
+      </div>
+
+      <div class="metric-card">
+        <h4>Activity & Goals</h4>
+        <div class="metric-item">
+          <span>Activity Level:</span>
+          <span id="metricActivity"></span>
+        </div>
+        <div class="metric-item">
+          <span>Weekly Activity Hours:</span>
+          <span id="metricWeeklyHours"></span>
+        </div>
+        <div class="metric-item">
+          <span>Health Goal:</span>
+          <span id="metricGoal"></span>
+        </div>
+        <div class="metric-item">
+          <span>Current Sleep:</span>
+          <span id="metricSleep"></span>
+        </div>
+      </div>
+
+      <div class="metric-card">
+        <h4>Health Calculated Values</h4>
+        <div class="metric-item">
+          <span>BMI Category:</span>
+          <span id="metricBMI"></span>
+        </div>
+        <div class="metric-item">
+          <span>Recommended Calories:</span>
+          <span id="metricCalories"></span>
+        </div>
+        <div class="metric-item">
+          <span>Daily Water:</span>
+          <span id="metricWater"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- DAILY ROUTINE CARDS -->
+    <div class="section-title">Your Daily Routine Schedule</div>
+    <div class="routine-container" id="routineContainer">
+      <!-- Will be populated by JavaScript -->
+    </div>
+
+    <!-- MEAL RECOMMENDATIONS -->
+    <div class="section-title">Daily Meal Plan</div>
+    <div class="section-subtitle">Nutrition & Weekly Planner is available on the Nutrition page so you can review meals, images, and your weekly menu in one place.</div>
+    <div class="callout-card">
+      <p>Meal suggestions, food images, and weekly planning are now available on the Nutrition page.</p>
+      <a href="meal.html" class="btn">Go to Nutrition Planner</a>
+    </div>
+
+    <!-- EXERCISE RECOMMENDATIONS -->
+    <div class="section-title">Exercise Recommendations</div>
+    <div class="exercise-card">
+      <div class="routine-time">💪 Personalized Workout Plan</div>
+      <div class="exercise-details">
+        <div class="exercise-item">
+          <h4>Cardio</h4>
+          <p id="exerciseCardio"></p>
+        </div>
+        <div class="exercise-item">
+          <h4>Strength Training</h4>
+          <p id="exerciseStrength"></p>
+        </div>
+        <div class="exercise-item">
+          <h4>Flexibility</h4>
+          <p id="exerciseFlexibility"></p>
+        </div>
+        <div class="exercise-item">
+          <h4>Intensity Level</h4>
+          <p id="exerciseIntensity"></p>
+        </div>
+        <div class="exercise-item full-width">
+          <h4>Special Notes</h4>
+          <p id="exerciseNotes"></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- TIPS SECTION -->
+    <div class="tips-section">
+      <h2>Tips for Success</h2>
+      <div class="tips-grid">
+        <div class="tip-card">
+          <h4>🎯 Be Consistent</h4>
+          <p>Follow this routine daily for at least 21 days to build lasting habits.</p>
+        </div>
+        <div class="tip-card">
+          <h4>💧 Hydration</h4>
+          <p id="tipHydration"></p>
+        </div>
+        <div class="tip-card">
+          <h4>🧘 Stress Support</h4>
+          <p id="tipStressSupport"></p>
+        </div>
+        <div class="tip-card">
+          <h4>📱 Sleep Quality</h4>
+          <p id="tipSleepQuality"></p>
+        </div>
+        <div class="tip-card">
+          <h4>📊 Track Progress</h4>
+          <p>Keep a journal to monitor improvements and adjust as needed.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ACTION BUTTONS -->
+    <div class="routine-actions">
+      <a href="index.html" class="btn-secondary">← Generate New Routine</a>
+      <a href="meal.html" class="btn-secondary">Nutrition & Weekly Planner</a>
+      <button class="btn-download" onclick="downloadRoutine()">📥 Download PDF</button>
+    </div>
+
+  </div>
+
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p>&copy; 2026 LifeSync. All rights reserved.</p>
+  <p>Create your perfect daily routine today!</p>
+</footer>
+
+<script>
+// Load and display routine on page load
+document.addEventListener('DOMContentLoaded', function() {
+  const formData = getFormData();
+  
+  if (!formData) {
+    document.getElementById('loadingMessage').innerHTML = '<p style="color: red; font-size: 18px; text-align: center; padding: 40px;">No routine data found. Please <a href="index.html">generate a new routine</a>.</p>';
+    return;
+  }
+  
+  // Generate personalized routine
+  const routine = generatePersonalizedRoutine(formData);
+  
+  // Hide loading and show content
+  document.getElementById('loadingMessage').style.display = 'none';
+  document.getElementById('routineContent').style.display = 'block';
+  
+  // Populate user greeting and calendar visibility
+  const userMode = localStorage.getItem('LifeSyncUserMode');
+  const storedName = localStorage.getItem('LifeSyncUserName');
+  const userName = storedName ? storedName : localStorage.getItem('LifeSyncUserEmail') ? localStorage.getItem('LifeSyncUserEmail').split('@')[0] : '';
+  if (userMode === 'registered' || userMode === 'signed-in') {
+    document.getElementById('userGreeting').textContent = `Welcome back, ${userName}! Here's your routine and your weekly calendar.`;
+    document.getElementById('calendarSection').style.display = 'block';
+    document.getElementById('guestCalendarNotice').style.display = 'none';
+    const calendarStatus = loadCalendarStatus();
+    renderCalendar(calendarStatus);
+    renderProgress(routine, calendarStatus);
+  } else {
+    document.getElementById('userGreeting').textContent = 'Welcome! Generate your routine and build healthy habits today.';
+    document.getElementById('calendarSection').style.display = 'none';
+    document.getElementById('guestCalendarNotice').style.display = 'block';
+  }
+  
+  // Populate health summary
+  document.getElementById('bmiValue').textContent = routine.healthMetrics.bmi;
+  document.getElementById('bmiStatus').textContent = routine.healthMetrics.bmiCategory;
+  document.getElementById('bmiStatus').className = getBMIColorClass(routine.healthMetrics.bmiCategory);
+  document.getElementById('healthScoreValue').textContent = `${routine.healthMetrics.healthScore.score}%`;
+  document.getElementById('healthScoreLabel').textContent = routine.healthMetrics.healthScore.label;
+  document.getElementById('caloriesValue').textContent = routine.healthMetrics.dailyCalories;
+  document.getElementById('waterValue').textContent = routine.healthMetrics.waterIntake;
+  document.getElementById('sleepValue').textContent = routine.healthMetrics.idealSleep;
+  
+  // Display health note and warning
+  const healthNoteDiv = document.getElementById('healthNote');
+  let noteText = '';
+  if (routine.healthMetrics.warning) {
+    noteText += routine.healthMetrics.warning + ' ';
+  }
+  if (routine.healthMetrics.note) {
+    noteText += routine.healthMetrics.note;
+  }
+  if (noteText) {
+    healthNoteDiv.textContent = noteText;
+    healthNoteDiv.style.display = 'block';
+  }
+  
+  // Populate sleep schedule
+  const sleepSchedule = routine.healthMetrics.sleepSchedule;
+  document.getElementById('sleepTitle').textContent = `Sleep: ${sleepSchedule.sleepHours} hours per night`;
+  document.getElementById('bedtime').textContent = sleepSchedule.bedtime;
+  document.getElementById('wakeTime').textContent = sleepSchedule.wakeTime;
+  document.getElementById('sleepDuration').textContent = `${sleepSchedule.sleepHours} hours`;
+  document.getElementById('sleepRecommendation').textContent = sleepSchedule.recommendation;
+  document.getElementById('sleepReason').textContent = sleepSchedule.reason || '';
+  
+  // Populate metrics
+  document.getElementById('metricAge').textContent = routine.userInfo.age + ' years';
+  document.getElementById('metricHeight').textContent = routine.userInfo.height + ' cm';
+  document.getElementById('metricWeight').textContent = routine.userInfo.weight + ' kg';
+  document.getElementById('metricGender').textContent = routine.userInfo.gender.charAt(0).toUpperCase() + routine.userInfo.gender.slice(1);
+  document.getElementById('metricActivity').textContent = routine.userInfo.activityLevel;
+  document.getElementById('metricWeeklyHours').textContent = routine.userInfo.weeklyActivityHours + ' hours';
+  document.getElementById('metricGoal').textContent = routine.userInfo.healthGoal;
+  document.getElementById('metricSleep').textContent = routine.userInfo.sleepHours + ' hours';
+  document.getElementById('metricBMI').textContent = routine.healthMetrics.bmiCategory + ' (BMI: ' + routine.healthMetrics.bmi + ')';
+  document.getElementById('metricCalories').textContent = routine.healthMetrics.dailyCalories + ' calories';
+  document.getElementById('metricWater').textContent = routine.healthMetrics.waterIntake + ' liters';
+  
+  // Populate exercise recommendations
+  const exercise = routine.healthMetrics.exerciseRecommendation;
+  document.getElementById('exerciseCardio').textContent = exercise.workoutPlan ? exercise.workoutPlan.cardio : (exercise.cardioMinutes + ' minutes per week of cardio');
+  document.getElementById('exerciseStrength').textContent = exercise.workoutPlan ? exercise.workoutPlan.strength : (exercise.strengthDays + ' days per week');
+  document.getElementById('exerciseFlexibility').textContent = exercise.workoutPlan ? exercise.workoutPlan.flexibility : 'Include stretching in your routine';
+  document.getElementById('exerciseIntensity').textContent = exercise.intensity;
+  document.getElementById('exerciseNotes').textContent = (exercise.note || exercise.warning || exercise.lowImpact ? (exercise.note || exercise.warning || 'Focus on low-impact activities') : 'No special limitations') + (exercise.stressSupport ? ' ' + exercise.stressSupport : '');
+  
+  // Populate tips
+  document.getElementById('tipHydration').textContent = `Drink approximately ${routine.healthMetrics.waterIntake} liters of water daily for optimal hydration.`;
+  document.getElementById('tipStressSupport').textContent = routine.healthMetrics.stressSupport || 'Keep monitoring stress and follow healthy habits to stay balanced.';
+  
+  // Render health chart and routine cards based on sleep schedule
+  drawBarChart('healthChart', ['Health', 'Sleep', 'Hydration', 'Activity'], [routine.healthMetrics.healthScore.score, routine.healthMetrics.sleepScore, Math.round(Math.min(routine.healthMetrics.waterIntake * 40, 100)), routine.healthMetrics.activityScore], ['#ff6b35', '#f7931e', '#0f766e', '#8e2de2']);
+  generateRoutineCards(sleepSchedule, routine.userInfo.healthGoal, routine.healthMetrics.exerciseRecommendation, routine.healthMetrics.mealRecommendations);
+});
+
+function generateRoutineCards(sleepSchedule, healthGoal, exerciseRec, mealRec) {
+  const container = document.getElementById('routineContainer');
+  
+  // Parse wake time from format like "6:00 AM" or "6:30 AM"
+  let wakeHour = 6;
+  let wakeMinute = 0;
+  const wakeTimeParts = sleepSchedule.wakeTime.match(/(\d+):(\d+)\s(AM|PM)/);
+  if (wakeTimeParts) {
+    wakeHour = parseInt(wakeTimeParts[1]);
+    wakeMinute = parseInt(wakeTimeParts[2]);
+    const period = wakeTimeParts[3];
+    // Convert to 24-hour format for calculations
+    if (period === 'PM' && wakeHour !== 12) {
+      wakeHour += 12;
+    } else if (period === 'AM' && wakeHour === 12) {
+      wakeHour = 0;
+    }
+  }
+  
+  const routines = [
+    {
+      time: sleepSchedule.wakeTime,
+      emoji: '🌅',
+      title: 'Wake Up & Morning Ritual',
+      description: 'Start your day with a glass of water and light stretching to energize yourself.',
+      duration: '30 min',
+      energy: 'Low'
+    },
+    {
+      time: formatTime(wakeHour, wakeMinute + 30),
+      emoji: '🥗',
+      title: 'Healthy Breakfast',
+      description: mealRec.breakfast,
+      duration: '20 min',
+      calories: mealRec.breakfast.split(' - ')[0]
+    },
+    {
+      time: formatTime(wakeHour + 1, wakeMinute),
+      emoji: '💪',
+      title: 'Exercise & Workout',
+      description: (exerciseRec.workoutPlan ? `Cardio: ${exerciseRec.workoutPlan.cardio}. Strength: ${exerciseRec.workoutPlan.strength}.` : `${exerciseRec.cardioMinutes} minutes of ${exerciseRec.intensity} activity. Mix cardio and strength training.`) + (exerciseRec.relaxation ? ` ${exerciseRec.relaxation}` : ''),
+      duration: exerciseRec.cardioMinutes + ' min',
+      intensity: exerciseRec.intensity
+    },
+    {
+      time: formatTime(wakeHour + 2, wakeMinute),
+      emoji: '⚙️',
+      title: 'Productive Work Session',
+      description: 'Focus on deep work during peak productivity hours. Take a 5-minute break every 50 minutes.',
+      duration: '2-3 hours',
+      break: 'Every 50 min'
+    },
+    {
+      time: '12:00 PM',
+      emoji: '🍽️',
+      title: 'Lunch Break',
+      description: mealRec.lunch,
+      duration: '30 min',
+      calories: mealRec.lunch.split(' - ')[0]
+    },
+    {
+      time: '01:30 PM',
+      emoji: '🚶',
+      title: 'Light Activity',
+      description: 'Take a 15-minute walk or do light stretching to maintain energy and improve digestion.',
+      duration: '15 min',
+      intensity: 'Low'
+    },
+    {
+      time: '06:30 PM',
+      emoji: '🍲',
+      title: 'Dinner',
+      description: mealRec.dinner,
+      duration: '30 min',
+      calories: mealRec.dinner.split(' - ')[0]
+    },
+    {
+      time: '08:00 PM',
+      emoji: '🧘',
+      title: 'Evening Wind Down',
+      description: 'Relax with reading, meditation, or light stretching. Avoid screens 30 minutes before bed.',
+      duration: '1 hour',
+      activity: 'Relaxing'
+    },
+    {
+      time: sleepSchedule.bedtime,
+      emoji: '😴',
+      title: 'Quality Sleep',
+      description: `Maintain consistent sleep schedule. You need ${sleepSchedule.sleepHours} hours for optimal recovery.`,
+      duration: sleepSchedule.sleepHours + ' hours',
+      recovery: 'Essential'
+    }
+  ];
+  
+  routines.forEach(routine => {
+    const card = document.createElement('div');
+    card.className = 'routine-card';
+    card.innerHTML = `
+      <div class="routine-time">${routine.emoji} ${routine.time}</div>
+      <h3>${routine.title}</h3>
+      <p>${routine.description}</p>
+      <div class="routine-details">
+        <span class="tag">Duration: ${routine.duration}</span>
+        ${routine.energy ? `<span class="tag">Energy: ${routine.energy}</span>` : ''}
+        ${routine.calories ? `<span class="tag">Calories: ${routine.calories}</span>` : ''}
+        ${routine.intensity ? `<span class="tag">Intensity: ${routine.intensity}</span>` : ''}
+        ${routine.break ? `<span class="tag">Break: ${routine.break}</span>` : ''}
+        ${routine.activity ? `<span class="tag">Activity: ${routine.activity}</span>` : ''}
+        ${routine.recovery ? `<span class="tag">${routine.recovery}</span>` : ''}
+      </div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+function formatTime(hour, minute) {
+  const period = hour >= 12 ? 'PM' : 'AM';
+  const displayHour = hour % 12 || 12;
+  const displayMinute = minute < 10 ? '0' + minute : minute;
+  return `${displayHour}:${displayMinute} ${period}`;
+}
+
+function getUserCalendarKey() {
+  const email = localStorage.getItem('LifeSyncUserEmail');
+  if (!email) return null;
+  return `lifesyncCalendar_${email}`;
+}
+
+function loadCalendarStatus() {
+  const key = getUserCalendarKey();
+  if (!key) return {};
+  const raw = JSON.parse(localStorage.getItem(key) || '{}');
+  // Convert old format (numbers) to new (objects)
+  const status = {};
+  for (const day in raw) {
+    if (typeof raw[day] === 'number') {
+      status[day] = { state: raw[day], calories: 0 };
+    } else {
+      status[day] = raw[day];
+    }
+  }
+  return status;
+}
+
+function saveCalendarStatus(status) {
+  const key = getUserCalendarKey();
+  if (!key) return;
+  localStorage.setItem(key, JSON.stringify(status));
+}
+
+function renderCalendar(status) {
+  const grid = document.getElementById('calendarGrid');
+  const summary = document.getElementById('calendarSummary');
+  const totalDays = 30;
+  grid.innerHTML = '';
+  const completedDays = Object.values(status).filter(day => day.state === 1).length;
+  const skippedDays = Object.values(status).filter(day => day.state === 2).length;
+  const pendingDays = totalDays - completedDays - skippedDays;
+  summary.textContent = `Completed ${completedDays} / ${totalDays} days • Skipped ${skippedDays} days • Pending ${pendingDays} days`;
+
+  for (let day = 1; day <= totalDays; day++) {
+    const dayData = status[day] || { state: 0, calories: 0 };
+    const state = dayData.state;
+    const card = document.createElement('button');
+    card.type = 'button';
+    card.className = `calendar-day ${state === 1 ? 'complete' : state === 2 ? 'skipped' : ''}`;
+    card.innerHTML = `
+      <span class="day-label">Day ${day}</span>
+      <span class="day-status">${state === 1 ? 'Done' : state === 2 ? 'Skipped' : 'Pending'}</span>
+      ${state === 1 && dayData.calories > 0 ? `<span class="day-calories">${dayData.calories} kcal</span>` : ''}
+    `;
+    card.addEventListener('click', () => {
+      openCalendarPopup(day);
+    });
+    grid.appendChild(card);
+  }
+}
+
+let selectedCalendarDay = null;
+
+function openCalendarPopup(day) {
+  selectedCalendarDay = day;
+  const status = loadCalendarStatus();
+  const currentData = status[day] || { state: 0, calories: 0 };
+  const popup = document.getElementById('calendarEntryPopup');
+  const title = document.getElementById('popupDayTitle');
+  const info = document.getElementById('popupDayInfo');
+  const input = document.getElementById('calendarCaloriesInput');
+
+  title.textContent = `Day ${day} progress`;
+  info.textContent = currentData.state === 1
+    ? 'This day is marked complete. Update calories or choose another action.'
+    : currentData.state === 2
+      ? 'This day is currently skipped. Mark it done, clear it, or enter a new value.'
+      : 'Record calories for this day or leave blank to use your default routine target.';
+  input.value = currentData.calories > 0 ? currentData.calories : '';
+  popup.classList.add('active');
+  popup.setAttribute('aria-hidden', 'false');
+  input.focus();
+}
+
+function closeCalendarPopup() {
+  selectedCalendarDay = null;
+  const popup = document.getElementById('calendarEntryPopup');
+  popup.classList.remove('active');
+  popup.setAttribute('aria-hidden', 'true');
+}
+
+function saveCalendarDayStatus(state) {
+  if (!selectedCalendarDay) {
+    return;
+  }
+
+  const status = loadCalendarStatus();
+  const currentData = status[selectedCalendarDay] || { state: 0, calories: 0 };
+  let calories = currentData.calories;
+
+  if (state === 1) {
+    const inputValue = document.getElementById('calendarCaloriesInput').value.trim();
+    calories = inputValue === '' ? 0 : parseInt(inputValue, 10) || 0;
+  } else {
+    calories = 0;
+  }
+
+  status[selectedCalendarDay] = { state, calories };
+  saveCalendarStatus(status);
+  renderCalendar(status);
+  const formData = getFormData();
+  if (formData) {
+    renderProgress(generatePersonalizedRoutine(formData), status);
+  }
+  closeCalendarPopup();
+}
+
+function renderProgress(routine, status) {
+  const totalDays = 30;
+  const completedDays = Object.values(status).filter(day => day.state === 1).length;
+  const skippedDays = Object.values(status).filter(day => day.state === 2).length;
+  const dailyCalories = routine.healthMetrics.dailyCalories;
+  const plannedMonthlyCalories = dailyCalories * totalDays;
+  const trackedCalories = Object.values(status).filter(day => day.state === 1).reduce((sum, day) => sum + (day.calories || dailyCalories), 0);
+  const dailyWater = parseFloat(routine.healthMetrics.waterIntake) || 0;
+  const totalWater = (dailyWater * completedDays).toFixed(1);
+  const completionRate = Math.round((completedDays / totalDays) * 100);
+  const completionMessage = completedDays === 0
+    ? 'Start completing routine days to unlock better progress insights.'
+    : completionRate >= 90
+      ? 'Excellent work — your completion rate is very strong.'
+      : completionRate >= 70
+        ? 'Great consistency — keep this pace to stay on track.'
+        : completionRate >= 50
+          ? 'Good start — aim for a few more completed days this month.'
+          : 'Focus on completing more days to build a stronger habit.';
+  
+  // Check for calorie overrun warning
+  const avgConsumed = completedDays > 0 ? trackedCalories / completedDays : 0;
+  let calorieWarning = '';
+  if (completedDays > 0) {
+    if (avgConsumed > dailyCalories * 1.2) {
+      calorieWarning = ` ⚠️ Your average daily calories (${Math.round(avgConsumed)} kcal) exceed your target by more than 20%. Consider adjusting portions to stay on track.`;
+    } else if (avgConsumed < dailyCalories * 0.5) {
+      calorieWarning = ` ⚠️ Your average daily calories (${Math.round(avgConsumed)} kcal) are less than half your target. Make sure you are eating enough to support energy, recovery, and healthy routine performance.`;
+    }
+  }
+  
+  document.getElementById('avgCaloriesValue').textContent = `${dailyCalories} kcal/day`;
+  document.getElementById('weeklyCaloriesValue').textContent = `${trackedCalories} kcal logged / ${plannedMonthlyCalories} kcal planned`;
+  document.getElementById('totalWaterValue').textContent = `${totalWater} L`;
+  document.getElementById('completionRateValue').textContent = `${completionRate}%`;
+  document.getElementById('completionMessage').textContent = completionMessage + calorieWarning;
+}
+
+function downloadRoutine() {
+  const formData = getFormData();
+  const routine = generatePersonalizedRoutine(formData);
+  
+  // Create PDF
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+  
+  // Set font
+  doc.setFont('helvetica');
+  
+  // Title
+  doc.setFontSize(20);
+  doc.text('LifeSync - Your Personalized Daily Routine', 20, 30);
+  
+  doc.setFontSize(12);
+  doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 20, 45);
+  
+  // User Information
+  doc.setFontSize(16);
+  doc.text('USER INFORMATION', 20, 65);
+  doc.setFontSize(12);
+  doc.text(`Age: ${routine.userInfo.age} years`, 20, 80);
+  doc.text(`Height: ${routine.userInfo.height} cm`, 20, 90);
+  doc.text(`Weight: ${routine.userInfo.weight} kg`, 20, 100);
+  doc.text(`Gender: ${routine.userInfo.gender}`, 20, 110);
+  doc.text(`Activity Level: ${routine.userInfo.activityLevel}`, 20, 120);
+  doc.text(`Health Goal: ${routine.userInfo.healthGoal}`, 20, 130);
+  
+  // Health Metrics
+  doc.setFontSize(16);
+  doc.text('HEALTH METRICS', 20, 150);
+  doc.setFontSize(12);
+  doc.text(`BMI: ${routine.healthMetrics.bmi} (${routine.healthMetrics.bmiCategory})`, 20, 165);
+  doc.text(`Daily Calorie Needs: ${routine.healthMetrics.dailyCalories} calories`, 20, 175);
+  doc.text(`Daily Water Intake: ${routine.healthMetrics.waterIntake} liters`, 20, 185);
+  doc.text(`Recommended Sleep: ${routine.healthMetrics.idealSleep} hours`, 20, 195);
+  
+  // Sleep Schedule
+  doc.setFontSize(16);
+  doc.text('SLEEP SCHEDULE', 20, 215);
+  doc.setFontSize(12);
+  doc.text(`Bedtime: ${routine.healthMetrics.sleepSchedule.bedtime}`, 20, 230);
+  doc.text(`Wake Time: ${routine.healthMetrics.sleepSchedule.wakeTime}`, 20, 240);
+  doc.text(`Duration: ${routine.healthMetrics.sleepSchedule.sleepHours} hours`, 20, 250);
+  
+  // Meal Recommendations
+  doc.setFontSize(16);
+  doc.text('MEAL RECOMMENDATIONS', 20, 270);
+  doc.setFontSize(12);
+  const meals = routine.healthMetrics.mealRecommendations;
+  doc.text(`Breakfast: ${meals.breakfast}`, 20, 285);
+  doc.text(`Lunch: ${meals.lunch}`, 20, 295);
+  doc.text(`Dinner: ${meals.dinner}`, 20, 305);
+  doc.text(`Snacks: ${meals.snacks}`, 20, 315);
+  
+  // Exercise Recommendations
+  doc.setFontSize(16);
+  doc.text('EXERCISE RECOMMENDATIONS', 20, 335);
+  doc.setFontSize(12);
+  const exercise = routine.healthMetrics.exerciseRecommendation;
+  doc.text(`Cardio: ${exercise.cardioMinutes} minutes per week`, 20, 350);
+  doc.text(`Strength: ${exercise.strengthDays} days per week`, 20, 360);
+  doc.text(`Intensity: ${exercise.intensity}`, 20, 370);
+  
+  // Download PDF
+  doc.save('LifeSync-Routine.pdf');
+}
+</script>

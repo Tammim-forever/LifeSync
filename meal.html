@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nutrition Plan & Weekly Planner - LifeSync</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap" rel="stylesheet">
+  <script src="health-calculator.js"></script>
+</head>
+<body>
+<header class="header">
+  <div class="logo">
+    <div class="heart-logo">
+      <svg width="50" height="50" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="#ff6b35"/>
+      </svg>
+    </div>
+    <span>LifeSync</span>
+  </div>
+  <nav>
+    <a href="start.html">Home</a>
+    <a href="routine.html">My Routine</a>
+    <a href="index.html">Build New Plan</a>
+  </nav>
+</header>
+
+<main class="meal-page">
+  <section class="meal-header">
+    <div class="section-intro">
+      <p class="eyebrow">Nutrition & Planning</p>
+      <h2>Your personalized weekly meal plan with food images and exact menu items.</h2>
+      <p>Track your weekly meals, see your nutrition chart, and use the planner to stay consistent.</p>
+    </div>
+    <div class="meal-summary-grid">
+      <div class="summary-card health-score-card">
+        <span class="label">Health Score</span>
+        <span id="mealHealthScore" class="value"></span>
+        <span id="mealHealthLabel" class="status"></span>
+      </div>
+      <div class="summary-card">
+        <span class="label">Daily Calories</span>
+        <span id="mealCalories" class="value"></span>
+      </div>
+      <div class="summary-card">
+        <span class="label">Protein Goal</span>
+        <span id="mealProtein" class="value"></span>
+      </div>
+      <div class="summary-card">
+        <span class="label">Water Target</span>
+        <span id="mealWater" class="value"></span>
+      </div>
+    </div>
+  </section>
+
+  <section class="chart-card">
+    <h3>Weekly Nutrition Score</h3>
+    <canvas id="mealChart" height="240"></canvas>
+  </section>
+
+  <section class="weekly-planner">
+    <div class="section-title">Weekly Planner</div>
+    <p class="calendar-description">Use this simple weekly planner to follow your meals and stay on track.</p>
+    <div class="planner-table-wrap">
+      <table class="planner-table">
+        <thead>
+          <tr>
+            <th>Day</th>
+            <th>Breakfast</th>
+            <th>Lunch</th>
+            <th>Dinner</th>
+            <th>Snack</th>
+          </tr>
+        </thead>
+        <tbody id="weeklyPlannerBody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="meal-recommendations meal-plan-cards">
+    <div class="meal-card meal-image-card">
+      <img id="breakfastImage" class="meal-image" alt="Breakfast recommendation" src="" />
+      <h4>🌅 Breakfast</h4>
+      <p id="mealBreakfast"></p>
+      <ul id="breakfastList"></ul>
+    </div>
+    <div class="meal-card meal-image-card">
+      <img id="lunchImage" class="meal-image" alt="Lunch recommendation" src="" />
+      <h4>🥗 Lunch</h4>
+      <p id="mealLunch"></p>
+      <ul id="lunchList"></ul>
+    </div>
+    <div class="meal-card meal-image-card">
+      <img id="dinnerImage" class="meal-image" alt="Dinner recommendation" src="" />
+      <h4>🍽️ Dinner</h4>
+      <p id="mealDinner"></p>
+      <ul id="dinnerList"></ul>
+    </div>
+    <div class="meal-card meal-image-card">
+      <img id="snacksImage" class="meal-image" alt="Snack recommendation" src="" />
+      <h4>🍎 Snacks</h4>
+      <p id="mealSnacks"></p>
+      <ul id="snacksList"></ul>
+    </div>
+  </section>
+
+  <section class="tips-section">
+    <div class="tip-card">
+      <h4>🔍 Why this works</h4>
+      <p id="mealPlanReason"></p>
+    </div>
+    <div class="tip-card">
+      <h4>📌 Weekly focus</h4>
+      <p>Keep your meals consistent, hydrate constantly, and aim to follow the plan at least five days each week.</p>
+    </div>
+  </section>
+
+  <div class="routine-actions">
+    <a href="routine.html" class="btn-secondary">← Back to Routine</a>
+    <a href="index.html" class="btn">Build New Plan</a>
+  </div>
+</main>
+
+<footer>
+  <p>&copy; 2026 LifeSync. All rights reserved.</p>
+  <p>Nutrition power for every week.</p>
+</footer>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const formData = getFormData();
+    if (!formData) {
+      document.body.innerHTML = '<div style="padding: 40px; text-align: center; color: #c2410c;">No meal plan data found. Please <a href="index.html">generate your routine</a>.</div>';
+      return;
+    }
+
+    const routine = generatePersonalizedRoutine(formData);
+    const meals = routine.healthMetrics.mealRecommendations;
+    const foodDetails = getFoodDetails(routine.healthMetrics.effectiveGoal, routine.healthMetrics.bmiCategory);
+
+    document.getElementById('mealHealthScore').textContent = `${routine.healthMetrics.healthScore.score}%`;
+    document.getElementById('mealHealthLabel').textContent = routine.healthMetrics.healthScore.label;
+    document.getElementById('mealCalories').textContent = `${routine.healthMetrics.dailyCalories} kcal`;
+    document.getElementById('mealProtein').textContent = `${calculateProteinNeeds(formData.weight, routine.healthMetrics.effectiveGoal, formData.activityLevel)} g`;
+    document.getElementById('mealWater').textContent = `${routine.healthMetrics.waterIntake} L`;
+    document.getElementById('mealPlanReason').textContent = `${routine.healthMetrics.reasons.food} ${routine.healthMetrics.reasons.calories}`;
+
+    document.getElementById('mealBreakfast').textContent = meals.breakfast;
+    document.getElementById('mealLunch').textContent = meals.lunch;
+    document.getElementById('mealDinner').textContent = meals.dinner;
+    document.getElementById('mealSnacks').textContent = meals.snacks;
+
+    const breakfastImage = document.getElementById('breakfastImage');
+    const lunchImage = document.getElementById('lunchImage');
+    const dinnerImage = document.getElementById('dinnerImage');
+    const snacksImage = document.getElementById('snacksImage');
+
+    breakfastImage.src = foodDetails.breakfast.image;
+    lunchImage.src = foodDetails.lunch.image;
+    dinnerImage.src = foodDetails.dinner.image;
+    snacksImage.src = foodDetails.snacks.image;
+
+    fillFoodList('breakfastList', foodDetails.breakfast.items);
+    fillFoodList('lunchList', foodDetails.lunch.items);
+    fillFoodList('dinnerList', foodDetails.dinner.items);
+    fillFoodList('snacksList', foodDetails.snacks.items);
+
+    renderWeeklyPlanner(buildWeeklyMealPlan(meals));
+    drawBarChart('mealChart', ['Health Score', 'Sleep', 'Hydration', 'Activity'], [routine.healthMetrics.healthScore.score, routine.healthMetrics.sleepScore, Math.round(Math.min(routine.healthMetrics.waterIntake * 40, 100)), routine.healthMetrics.activityScore], ['#ff6b35', '#f7931e', '#6d28d9', '#0f766e']);
+  });
+
+  function fillFoodList(listId, items) {
+    const list = document.getElementById(listId);
+    list.innerHTML = items.map(item => `<li>${item}</li>`).join('');
+  }
+
+  function renderWeeklyPlanner(plan) {
+    const tbody = document.getElementById('weeklyPlannerBody');
+    tbody.innerHTML = plan.map(row => `
+      <tr>
+        <td>${row.day}</td>
+        <td>${row.breakfast}</td>
+        <td>${row.lunch}</td>
+        <td>${row.dinner}</td>
+        <td>${row.snack}</td>
+      </tr>
+    `).join('');
+  }
+</script>
+</body>
+</html>

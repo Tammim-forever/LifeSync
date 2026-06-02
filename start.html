@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>LifeSync | Welcome</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<header class="header">
+  <div class="logo">
+    <div class="heart-logo">
+      <svg width="50" height="50" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="#ff6b35"/>
+      </svg>
+    </div>
+    <span>LifeSync</span>
+  </div>
+  <nav>
+    <a href="start.html">Home</a>
+    <a href="index.html">Routine Form</a>
+    <a href="routine.html">My Routine</a>
+    <button class="btn" onclick="window.location.href='index.html'">Start Free</button>
+  </nav>
+</header>
+
+<section class="auth-hero">
+  <div class="auth-hero-copy">
+    <span class="eyebrow">Welcome to LifeSync</span>
+    <h1>Unlock your best daily routine with login, signup, or guest access.</h1>
+    <p>Get a personalized plan, save your preferences, and return to your progress anytime.</p>
+    <div class="hero-actions">
+      <button class="btn btn-guest" onclick="redirectGuest()">Continue as Guest</button>
+    </div>
+  </div>
+
+  <div class="auth-card fade-in">
+    <div class="auth-tabs">
+      <button type="button" class="auth-tab-btn active" data-target="loginForm">Login</button>
+      <button type="button" class="auth-tab-btn" data-target="signupForm">Create Account</button>
+    </div>
+
+    <div class="auth-panel active" id="loginForm">
+      <form onsubmit="handleAuth(event, 'login')">
+        <div class="input-group">
+          <label for="loginEmail">Email</label>
+          <input id="loginEmail" type="email" class="auth-input" placeholder="hello@example.com" required>
+        </div>
+        <div class="input-group">
+          <label for="loginPassword">Password</label>
+          <input id="loginPassword" type="password" class="auth-input" placeholder="••••••••" required>
+        </div>
+        <button type="submit" class="auth-action">Login</button>
+      </form>
+    </div>
+
+    <div class="auth-panel" id="signupForm">
+      <form onsubmit="handleAuth(event, 'signup')">
+        <div class="input-group">
+          <label for="signupName">Full Name</label>
+          <input id="signupName" type="text" class="auth-input" placeholder="Your name" required>
+        </div>
+        <div class="input-group">
+          <label for="signupEmail">Email</label>
+          <input id="signupEmail" type="email" class="auth-input" placeholder="hello@example.com" required>
+        </div>
+        <div class="input-group">
+          <label for="signupPassword">Password</label>
+          <input id="signupPassword" type="password" class="auth-input" placeholder="••••••••" required>
+        </div>
+        <div class="input-group">
+          <label for="signupConfirm">Confirm Password</label>
+          <input id="signupConfirm" type="password" class="auth-input" placeholder="••••••••" required>
+        </div>
+        <button type="submit" class="auth-action">Create Account</button>
+      </form>
+    </div>
+
+    <div class="auth-footer">
+      <p>Prefer not to sign in?</p>
+      <button type="button" class="guest-link" onclick="redirectGuest()">Continue as Guest</button>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>&copy; 2026 LifeSync. All rights reserved.</p>
+  <p>Start building stronger habits now.</p>
+</footer>
+
+<script>
+  const tabs = document.querySelectorAll('.auth-tab-btn');
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      tabs.forEach(btn => btn.classList.remove('active'));
+      tab.classList.add('active');
+      document.querySelectorAll('.auth-panel').forEach(panel => panel.classList.remove('active'));
+      document.getElementById(tab.dataset.target).classList.add('active');
+    });
+  });
+
+  function redirectGuest() {
+    localStorage.setItem('LifeSyncUserMode', 'guest');
+    window.location.href = 'index.html';
+  }
+
+  function handleAuth(event, mode) {
+    event.preventDefault();
+    if (mode === 'login') {
+      const email = document.getElementById('loginEmail').value.trim();
+      const password = document.getElementById('loginPassword').value.trim();
+      if (!email || !password) {
+        alert('Please enter both email and password.');
+        return;
+      }
+      const inferredName = email.split('@')[0].replace(/[._-]+/g, ' ');
+      localStorage.setItem('LifeSyncUserMode', 'signed-in');
+      localStorage.setItem('LifeSyncUserEmail', email);
+      localStorage.setItem('LifeSyncUserName', inferredName);
+      window.location.href = 'index.html';
+      return;
+    }
+
+    const name = document.getElementById('signupName').value.trim();
+    const email = document.getElementById('signupEmail').value.trim();
+    const password = document.getElementById('signupPassword').value;
+    const confirmPassword = document.getElementById('signupConfirm').value;
+
+    if (!name || !email || !password || !confirmPassword) {
+      alert('Please complete every field to create your account.');
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      alert('Passwords do not match. Please try again.');
+      return;
+    }
+
+    localStorage.setItem('LifeSyncUserMode', 'registered');
+    localStorage.setItem('LifeSyncUserName', name);
+    localStorage.setItem('LifeSyncUserEmail', email);
+    window.location.href = 'index.html';
+  }
+</script>
+
+</body>
+</html>
